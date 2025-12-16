@@ -19,6 +19,8 @@ export default function signin() {
   const [loading, setloading] = useState(false);
   const [phone, setphone] = useState(null);
   const [pass, setpass] = useState(null);
+  const [countryCode, setCountryCode] = useState("+92");
+  const [userRole, setUserRole] = useState("STANDARD"); // STANDARD | BUSINESS | EMPLOYEE
   const router = useRouter();
 
   const searchParams = useSearchParams();
@@ -27,19 +29,6 @@ export default function signin() {
   const isAdmin = role === "admin";
 
   const { setlogin } = useUser();
-  const checkType = (str) => {
-    if (!str || typeof str !== "string") return "Unknown";
-    const value = str.trim();
-
-    // Email: RFC 5322 Official Standard (simplified)
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    // Phone: E.164 international format, e.g. +1234567890 (10-15 digits)
-    const phoneRegex = /^\d{10,15}$/;
-
-    if (emailRegex.test(value)) return "Email";
-    if (phoneRegex.test(value)) return "Phone";
-    return "Unknown";
-  };
   const login = async (e) => {
     e.preventDefault();
     try {
@@ -49,27 +38,62 @@ export default function signin() {
         toast("Please fill all fields");
         return;
       }
+      let response;
 
-
-      const role = checkType(phone) === "Email" ? "admin" : "businessUser";
-      console.log("role to sign in", role); 
-      const response = await GlobalApi.login(phone, pass, role);
+      if (isAdmin) {
+        // Admin / superadmin login with email & password
+        console.log("role to sign in", "admin");
+        response = await GlobalApi.login(phone, pass, "admin");
+      } else {
+        // Profile / Business / Employee login with phone, country code & selected role
+        console.log("role to sign in", userRole);
+        response = await GlobalApi.login(phone, pass, userRole, countryCode);
+      }
       console.log("response", response);
 
       // Enhanced security: check role and isAdmin from backend response
-      const userRole = response?.data?.user?.role || response?.data?.role;
-      const isAdminFlag = response?.data?.user?.isAdmin ?? response?.data?.isAdmin;
+      const backendUser =
+        response?.data?.data?.user || response?.data?.user || null;
+      const backendToken =
+        response?.data?.data?.token || response?.data?.token || null;
+      const userRoleFromBackend = backendUser?.role;
+      const isAdminFlag = backendUser?.isAdmin;
 
-      console.log("userRole", userRole);
+      console.log("11", response);
+
+      console.log("response?.data", response?.data);
+
+
+      console.log("userRoleFromBackend", userRoleFromBackend);
       console.log("isAdminFlag", isAdminFlag);
 
+      console.log("response?.data?.data", response?.status);
+
+
+      console.log("response?.data?.user", JSON.stringify(response,null,2));
+
       if (response?.status === 200) {
-        if (userRole === "STANDARD" && isAdminFlag === true) {
-          setlogin(response?.data?.user, response?.data?.token, "admin");
+        // Superadmin (STANDARD + isAdmin true)
+        if (userRoleFromBackend === "STANDARD" && isAdminFlag === true) {
+          setlogin(backendUser, backendToken, "admin");
           setloading(false);
           toast("Login Success");
-        } else if (userRole === "BUSINESS" && isAdminFlag === false) {
-          setlogin(response?.data?.data?.user || response?.data?.user, response?.data?.data?.token || response?.data?.token, "businessUser");
+        }
+        // Business user
+        else if (userRoleFromBackend === "BUSINESS" && isAdminFlag === false) {
+          setlogin(backendUser, backendToken, "BUSINESS");
+          setloading(false);
+          toast("Login Success");
+        }
+        // Standard profile user (non-admin)
+        else if (userRoleFromBackend === "STANDARD" && isAdminFlag === false) {
+          setlogin(backendUser, backendToken, "STANDARD");
+          setloading(false);
+          toast("Login Success");
+        }
+        // Employee user
+        else if (userRoleFromBackend === "EMPLOYEE") {
+          setlogin(backendUser, backendToken, "EMPLOYEE");
           setloading(false);
           toast("Login Success");
         } else {
@@ -133,6 +157,23 @@ export default function signin() {
             Welcome Back
           </h2>
           <form className="space-y-4" onSubmit={login}>
+            {!isAdmin && (
+              <div>
+                <label htmlFor="userRole" className="sr-only">
+                  User Role
+                </label>
+                <select
+                  id="userRole"
+                  className="border border-color-input rounded-md px-3 py-2 md:px-4 md:py-3 bg-white text-black w-full"
+                  value={userRole}
+                  onChange={(e) => setUserRole(e.target.value)}
+                >
+                  <option value="STANDARD">STANDARD</option>
+                  <option value="BUSINESS">BUSINESS</option>
+                  <option value="EMPLOYEE">EMPLOYEE</option>
+                </select>
+              </div>
+            )}
             <div>
               <label htmlFor="phone" className="sr-only">
                 Phone Number
@@ -141,17 +182,33 @@ export default function signin() {
                 {isAdmin ? (
                   <MailIcon className="text-gray-400" />
                 ) : (
-                  <Callicon />
-                )
-                }
+                  <>
+                    <Callicon />
+                    <select
+                      className="focus:outline-none text-black focus:ring-0 border-0 bg-transparent cursor-pointer pr-2 font-medium"
+                      value={countryCode}
+                      onChange={(e) => setCountryCode(e.target.value)}
+                    >
+                      <option value="+92">+92</option>
+                      <option value="+91">+91</option>
+                      <option value="+971">+971</option>
+                      <option value="+1">+1</option>
+                      <option value="+44">+44</option>
+                      <option value="+86">+86</option>
+                    </select>
+                    <span className="text-gray-300">|</span>
+                  </>
+                )}
                 <input
                   id="phone"
                   name="phone"
                   type={isAdmin ? "email" : "tel"}
                   required
-                  className="w-full focus:outline-none text-black focus:ring-0 border-0 placeholder:text-gray-400"
+                  className="flex-1 focus:outline-none text-black focus:ring-0 border-0 placeholder:text-gray-400"
                   placeholder={
-                    isAdmin ? "Enter your Email" : "Enter Your Phone Number (e.g. 1234567890)"
+                    isAdmin
+                      ? "Enter your Email"
+                      : "Enter Your Phone Number (e.g. 1234567890)"
                   }
                   value={phone || ""}
                   onChange={(e) => setphone(e.target.value)}

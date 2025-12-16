@@ -4,24 +4,46 @@ const axiosClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BASEURL,
 });
 
-const login = async (phn, pass, role) => {
-  console.log("role in globale API", role);
+const login = async (phn, pass, role, countryCode = "+92") => {
+  // role can be:
+  // - "admin"          → superadmin login with email/password
+  // - "BUSINESS"       → business user login (user/login-business)
+  // - "STANDARD"       → standard user login (user/login-profile)
+  // - "EMPLOYEE"       → employee login (user/login-profile)
+  console.log("role in Global API login", role);
   try {
-    let data =
-      role === "admin"
-        ? JSON.stringify({
-            email: phn,
-            password: pass,
-          })
-        : JSON.stringify({
-            phoneNumber: phn,
-            password: pass,
-          });
+    let data;
+    let url;
 
+    if (role === "admin") {
+      // Super admin login with email
+      data = JSON.stringify({
+        email: phn,
+        password: pass,
+      });
+      url = "auth/login";
+    } else {
+      // Profile / business / employee login with phone, country code & userRole
+      data = JSON.stringify({
+        phoneNumber: phn,
+        countryCode: countryCode,
+        password: pass,
+        userRole: role, // "STANDARD" | "BUSINESS" | "EMPLOYEE"
+      });
+
+      if (role === "BUSINESS") {
+        url = "user/login-business";
+      } else {
+        // STANDARD and EMPLOYEE (and any other profile-type roles) use profile endpoint
+        url = "user/login-profile";
+      }
+    }
+
+    console.log("login payload", data, "url:", url);
     let config = {
       method: "post",
       maxBodyLength: Infinity,
-      url: role === "admin" ? "auth/login" : "user/login-business",
+      url,
       headers: {
         "Content-Type": "application/json",
       },
@@ -29,7 +51,7 @@ const login = async (phn, pass, role) => {
     };
 
     const response = await axiosClient.request(config);
-
+    console.log("22", response);
     if (role === "admin") {
       return response;
     } else {

@@ -169,6 +169,11 @@ export default function Sidebar({ page }) {
                 return null; // Don't render this item for non-admins
               }
 
+              // Show "users" menu item only for BUSINESS role
+              if (item.check === "Employees" && Role !== "BUSINESS") {
+                return null; // Don't render this item for non-BUSINESS users
+              }
+
               return (
                 <li key={item.name} className="mt-1">
                   <Link
