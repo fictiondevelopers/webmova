@@ -100,7 +100,7 @@ export default function createpassword() {
                 Password
               </label>
               <span className="flex items-center gap-2 border border-color-input rounded-md px-3 py-2 md:px-4 md:py-3 w-full">
-                <Image src={Keyicon} alt="key" width={20} height={20} className="flex-shrink-0" />
+                <Keyicon className="flex-shrink-0" />
                 <input
                   id="password"
                   name="password"
@@ -131,7 +131,7 @@ export default function createpassword() {
                 Create New Password
               </label>
               <span className="flex items-center gap-2 border border-color-input rounded-lg px-3 py-2 md:px-4 md:py-3 w-full">
-                <Image src={Keyicon} alt="key" width={20} height={20} className="flex-shrink-0" />
+                <Keyicon className="flex-shrink-0" />
                 <input
                   id="new-password"
                   name="new-password"

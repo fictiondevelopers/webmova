@@ -416,9 +416,9 @@ export default function Employee() {
                             }`}
                           >
                             {employee?.isActive ? (
-                              <Image src={Active} alt="active" width={16} height={16} className="flex-shrink-0" />
+                              <Active className="flex-shrink-0" />
                             ) : (
-                              <Image src={Nonactive} alt="inactive" width={16} height={16} className="flex-shrink-0" />
+                              <Nonactive className="flex-shrink-0" />
                             )}{" "}
                             {employee?.isActive ? "Active" : "Inactive"}
                           </button>
@@ -478,9 +478,9 @@ export default function Employee() {
                             }`}
                           >
                             {employee?.user?.isActive ? (
-                              <Image src={Active} alt="active" width={16} height={16} className="flex-shrink-0" />
+                              <Active className="flex-shrink-0" />
                             ) : (
-                              <Image src={Nonactive} alt="inactive" width={16} height={16} className="flex-shrink-0" />
+                              <Nonactive className="flex-shrink-0" />
                             )}{" "}
                             {employee?.user?.isActive ? "Active" : "Inactive"}
                           </button>
