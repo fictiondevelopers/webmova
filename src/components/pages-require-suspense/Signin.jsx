@@ -183,7 +183,7 @@ export default function signin() {
                   <MailIcon className="text-gray-400" />
                 ) : (
                   <>
-                    <Callicon />
+                    <Image src={Callicon} alt="phone" width={20} height={20} className="flex-shrink-0" />
                     <select
                       className="focus:outline-none text-black focus:ring-0 border-0 bg-transparent cursor-pointer pr-2 font-medium"
                       value={countryCode}
@@ -220,7 +220,7 @@ export default function signin() {
                 Password
               </label>
               <span className="flex items-center gap-2 border border-color-input rounded-md px-3 py-2 md:px-4 md:py-3 w-full">
-                <Keyicon />
+                <Image src={Keyicon} alt="key" width={20} height={20} className="flex-shrink-0" />
                 <input
                   id="password"
                   name="password"

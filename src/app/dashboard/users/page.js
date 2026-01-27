@@ -1,6 +1,7 @@
 "use client";
 import Layout from "../../../components/layout/layout";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { Card, CardContent } from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
 import { Button } from "../../../components/ui/button";
@@ -414,7 +415,11 @@ export default function Employee() {
                                 : "text-red-700 gap-2"
                             }`}
                           >
-                            {employee?.isActive ? <Active /> : <Nonactive />}{" "}
+                            {employee?.isActive ? (
+                              <Image src={Active} alt="active" width={16} height={16} className="flex-shrink-0" />
+                            ) : (
+                              <Image src={Nonactive} alt="inactive" width={16} height={16} className="flex-shrink-0" />
+                            )}{" "}
                             {employee?.isActive ? "Active" : "Inactive"}
                           </button>
                         </TableCell>
@@ -473,9 +478,9 @@ export default function Employee() {
                             }`}
                           >
                             {employee?.user?.isActive ? (
-                              <Active />
+                              <Image src={Active} alt="active" width={16} height={16} className="flex-shrink-0" />
                             ) : (
-                              <Nonactive />
+                              <Image src={Nonactive} alt="inactive" width={16} height={16} className="flex-shrink-0" />
                             )}{" "}
                             {employee?.user?.isActive ? "Active" : "Inactive"}
                           </button>

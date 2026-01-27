@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import Activity from "../../assets/Activity.svg";
 import Active from "../../assets/active.svg";
 import Cookies from "js-cookie";
@@ -189,9 +190,9 @@ export default function Sidebar({ page }) {
                     }}
                   >
                     {activeItem === item.check ? (
-                      <item.icon className="mr-3" />
+                      <Image src={item.icon} alt="icon" width={20} height={20} className="mr-3 flex-shrink-0" />
                     ) : (
-                      <item.activeicon className="mr-3" />
+                      <Image src={item.activeicon} alt="icon" width={20} height={20} className="mr-3 flex-shrink-0" />
                     )}
                     {item.name === "Employees"
                       ? Role === "admin"

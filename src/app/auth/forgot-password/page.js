@@ -79,7 +79,7 @@ export default function forgotpassword() {
                 Phone Number
               </label>
               <span className="flex items-center gap-2 border border-color-input rounded-md px-3 py-2 md:px-4 md:py-3 w-full">
-                <Callicon />
+                <Image src={Callicon} alt="phone" width={20} height={20} className="flex-shrink-0" />
                 <input
                   id="phone"
                   name="phone"
