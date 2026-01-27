@@ -1,6 +1,7 @@
 "use client";
 import Layout from "../../../../components/layout/layout";
 import Layoutsettings from "../../../../pop-ups/layout-settings";
+import Image from "next/image";
 import Keyicon from "../../../../assets/key.svg";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
@@ -98,7 +99,7 @@ export default function ChangePassword() {
                   Current Password
                 </label>
                 <span className="flex items-center gap-2 border border-color-input rounded-lg px-3 py-2 md:px-4 md:py-3 w-auto">
-                  <Keyicon />
+                  <Image src={Keyicon} alt="key" width={20} height={20} className="flex-shrink-0" />
                   <input
                     id="current-password"
                     name="current-password"
@@ -131,7 +132,7 @@ export default function ChangePassword() {
                   Create New Password
                 </label>
                 <span className="flex items-center gap-2 border border-color-input rounded-lg px-3 py-2 md:px-4 md:py-3 w-full">
-                  <Keyicon />
+                  <Image src={Keyicon} alt="key" width={20} height={20} className="flex-shrink-0" />
                   <input
                     id="new-password"
                     name="new-password"
